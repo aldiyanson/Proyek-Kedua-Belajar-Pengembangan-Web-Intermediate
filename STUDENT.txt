@@ -1,4 +1,6 @@
 APP_URL=http://localhost:9000
+https://proyek-kedua-belajar-pengembangan-w-one.vercel.app/#/
+
 MAP_SERVICE_API_KEY=Get_your_own_MapTiler_key
 
 
