@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Push Notifications - DiCerita</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/styles.css">
+    <style>
+        body {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: var(--color-surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+        }
+        .test-header h1 {
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+        .test-header p {
+            color: var(--color-light-text);
+        }
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px;
+            border-radius: var(--radius);
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        .status-indicator.online {
+            background: var(--color-secondary);
+        }
+        .status-indicator.offline {
+            background: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1><i class="fa-solid fa-bell"></i> Test Push Notifications</h1>
+        <p>Halaman testing untuk fitur push notification PWA</p>
+        <div class="status-indicator" id="status-indicator">
+            <i class="fa-solid fa-wifi"></i> Checking...
+        </div>
+    </div>
+
+    <div id="app-content"></div>
+
+    <!-- Test Console -->
+    <div class="technical-info" style="margin-top: 32px;">
+        <h3><i class="fa-solid fa-terminal"></i> Console Log</h3>
+        <div id="console-log" style="background: #000; color: #0f0; padding: 16px; border-radius: 6px; font-family: monospace; height: 200px; overflow-y: auto; white-space: pre-wrap;"></div>
+        <button id="clear-console" class="action-btn secondary" style="margin-top: 12px;">
+            <i class="fa-solid fa-trash"></i> Clear Console
+        </button>
+    </div>
+
+    <script type="module">
+        // Import the push notification components
+        import PushNotificationView from './src/scripts/pages/view/push-notification-view.js';
+        import PushNotificationModel from './src/scripts/pages/model/push-notification-model.js';
+        import PushNotificationPresenter from './src/scripts/pages/presenter/push-notification-presenter.js';
+
+        class TestApp {
+            constructor() {
+                this.presenter = new PushNotificationPresenter();
+                this.setupConsoleCapture();
+                this.setupNetworkStatus();
+            }
+
+            async init() {
+                try {
+                    const content = await this.presenter.render();
+                    document.getElementById('app-content').innerHTML = content;
+                    await this.presenter.afterRender();
+                    this.logToConsole('✅ Push Notification UI berhasil dimuat');
+                    
+                    // Auto-check status after initialization
+                    setTimeout(() => {
+                        this.checkInitialStatus();
+                    }, 1000);
+                } catch (error) {
+                    this.logToConsole(`❌ Error loading Push Notification UI: ${error.message}`);
+                    document.getElementById('app-content').innerHTML = `
+                        <div class="status-message error">
+                            <div class="message-content">
+                                <i class="fa-solid fa-exclamation-circle"></i>
+                                <span>Error: ${error.message}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            async checkInitialStatus() {
+                this.logToConsole('🔍 Checking initial push notification status...');
+                
+                // Check browser support
+                const support = {
+                    serviceWorker: 'serviceWorker' in navigator,
+                    pushManager: 'PushManager' in window,
+                    notification: 'Notification' in window
+                };
+                
+                this.logToConsole(`Browser Support: SW=${support.serviceWorker}, Push=${support.pushManager}, Notification=${support.notification}`);
+                
+                // Check permission
+                if ('Notification' in window) {
+                    this.logToConsole(`Notification Permission: ${Notification.permission}`);
+                }
+                
+                // Check existing subscription
+                try {
+                    if ('serviceWorker' in navigator) {
+                        const registration = await navigator.serviceWorker.ready;
+                        const subscription = await registration.pushManager.getSubscription();
+                        this.logToConsole(`Existing Subscription: ${subscription ? 'Yes' : 'No'}`);
+                        if (subscription) {
+                            this.logToConsole(`Endpoint: ${subscription.endpoint.substring(0, 50)}...`);
+                        }
+                    }
+                } catch (error) {
+                    this.logToConsole(`Error checking subscription: ${error.message}`);
+                }
+            }
+
+            setupConsoleCapture() {
+                const consoleElement = document.getElementById('console-log');
+                const originalLog = console.log;
+                const originalError = console.error;
+                const originalWarn = console.warn;
+
+                console.log = (...args) => {
+                    originalLog.apply(console, args);
+                    this.logToConsole('LOG: ' + args.join(' '));
+                };
+
+                console.error = (...args) => {
+                    originalError.apply(console, args);
+                    this.logToConsole('ERROR: ' + args.join(' '));
+                };
+
+                console.warn = (...args) => {
+                    originalWarn.apply(console, args);
+                    this.logToConsole('WARN: ' + args.join(' '));
+                };
+
+                document.getElementById('clear-console').addEventListener('click', () => {
+                    consoleElement.textContent = '';
+                });
+            }
+
+            logToConsole(message) {
+                const consoleElement = document.getElementById('console-log');
+                const timestamp = new Date().toLocaleTimeString();
+                consoleElement.textContent += `[${timestamp}] ${message}\n`;
+                consoleElement.scrollTop = consoleElement.scrollHeight;
+            }
+
+            setupNetworkStatus() {
+                const indicator = document.getElementById('status-indicator');
+                
+                const updateStatus = () => {
+                    if (navigator.onLine) {
+                        indicator.innerHTML = '<i class="fa-solid fa-wifi"></i> Online';
+                        indicator.className = 'status-indicator online';
+                    } else {
+                        indicator.innerHTML = '<i class="fa-solid fa-wifi-slash"></i> Offline';
+                        indicator.className = 'status-indicator offline';
+                    }
+                };
+
+                window.addEventListener('online', () => {
+                    updateStatus();
+                    this.logToConsole('🌐 Network: Online');
+                });
+
+                window.addEventListener('offline', () => {
+                    updateStatus();
+                    this.logToConsole('🌐 Network: Offline');
+                });
+
+                updateStatus();
+            }
+        }
+
+        // Initialize the test app
+        const app = new TestApp();
+        app.init();
+
+        // Global test functions
+        window.testPushNotifications = {
+            async requestPermission() {
+                if ('Notification' in window) {
+                    const permission = await Notification.requestPermission();
+                    app.logToConsole(`Permission requested: ${permission}`);
+                    return permission;
+                } else {
+                    app.logToConsole('Notifications not supported');
+                    return 'not-supported';
+                }
+            },
+
+            async sendTestNotification() {
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    const notification = new Notification('Test from DiCerita', {
+                        body: 'This is a test push notification!',
+                        icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzE4NzdmMiIvPgo8cGF0aCBkPSJNMTYgMTZoOGw4IDE2LTggMTZIMTZWMTZaTTMyIDI0djE2aDhsOC0xNlYyNGgtMTZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K',
+                        badge: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzE4NzdmMiIvPgo8cGF0aCBkPSJNMTYgMTZoOGw4IDE2LTggMTZIMTZWMTZaTTMyIDI0djE2aDhsOC0xNlYyNGgtMTZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K'
+                    });
+                    
+                    notification.onclick = function() {
+                        app.logToConsole('Test notification clicked');
+                        window.focus();
+                        notification.close();
+                    };
+                    
+                    app.logToConsole('Test notification sent');
+                    return notification;
+                } else {
+                    app.logToConsole('Cannot send notification - permission not granted');
+                    return null;
+                }
+            },
+
+            async checkServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const registration = await navigator.serviceWorker.register('/sw.js');
+                        app.logToConsole(`Service Worker registered: ${registration.scope}`);
+                        return registration;
+                    } catch (error) {
+                        app.logToConsole(`Service Worker registration failed: ${error.message}`);
+                        return null;
+                    }
+                } else {
+                    app.logToConsole('Service Worker not supported');
+                    return null;
+                }
+            }
+        };
+
+        // Log available test functions
+        app.logToConsole('🚀 Test App Initialized');
+        app.logToConsole('Available functions:');
+        app.logToConsole('- testPushNotifications.requestPermission()');
+        app.logToConsole('- testPushNotifications.sendTestNotification()');
+        app.logToConsole('- testPushNotifications.checkServiceWorker()');
+    </script>
+</body>
+</html>

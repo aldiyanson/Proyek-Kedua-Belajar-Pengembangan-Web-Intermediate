@@ -1,0 +1,16 @@
+APP_URL=http://localhost:9000
+MAP_SERVICE_API_KEY=Get_your_own_MapTiler_key
+
+
+
+# Informasi Project
+Nama: DiCerita - Platform Berbagi Cerita
+Tema: Berbagi Cerita
+Deskripsi: Aplikasi ini memungkinkan pengguna untuk berbagi cerita dan pengalaman.
+
+# Fitur
+- Menampilkan daftar cerita dari API dengan format sosial media
+- Menambah cerita baru dengan foto dari kamera dan lokasi dari map
+- Peta interaktif untuk menampilkan lokasi cerita
+- Menerapkan aksesibilitas dan View Transition API
+- Mobile friendly

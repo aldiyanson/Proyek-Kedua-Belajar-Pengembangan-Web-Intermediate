@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 404 Page - DiCerita</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/styles.css">
+    <style>
+        body {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: var(--color-surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+        }
+        .test-header h1 {
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+        .test-header p {
+            color: var(--color-light-text);
+        }
+        .test-links {
+            margin-bottom: 32px;
+            padding: 20px;
+            background: var(--color-surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+        }
+        .test-links h3 {
+            margin-bottom: 16px;
+            color: var(--color-text);
+        }
+        .test-link {
+            display: inline-block;
+            margin: 8px 12px 8px 0;
+            padding: 8px 16px;
+            background: var(--color-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius);
+            transition: background-color 0.2s ease;
+        }
+        .test-link:hover {
+            background: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1><i class="fa-solid fa-exclamation-triangle"></i> Test 404 Page</h1>
+        <p>Halaman testing untuk fitur Not Found (Kriteria Opsional 3)</p>
+    </div>
+
+    <div class="test-links">
+        <h3>Test Links - Klik untuk trigger 404:</h3>
+        <a href="test-404-page.html#/invalid-page" class="test-link">Invalid Route</a>
+        <a href="test-404-page.html#/story/invalid-id" class="test-link">Invalid Story ID</a>
+        <a href="test-404-page.html#/nonexistent" class="test-link">Non-existent Page</a>
+        <a href="test-404-page.html#/users/123" class="test-link">Undefined Route</a>
+        <a href="test-404-page.html#/admin" class="test-link">Admin Page</a>
+        <a href="test-404-page.html#/dashboard" class="test-link">Dashboard</a>
+        <a href="test-404-page.html#/settings" class="test-link">Settings</a>
+    </div>
+
+    <div id="app-content"></div>
+
+    <!-- Console Log -->
+    <div class="technical-info" style="margin-top: 32px;">
+        <h3><i class="fa-solid fa-terminal"></i> Console Log</h3>
+        <div id="console-log" style="background: #000; color: #0f0; padding: 16px; border-radius: 6px; font-family: monospace; height: 200px; overflow-y: auto; white-space: pre-wrap;"></div>
+        <button id="clear-console" class="action-btn secondary" style="margin-top: 12px;">
+            <i class="fa-solid fa-trash"></i> Clear Console
+        </button>
+    </div>
+
+    <script type="module">
+        // Import the not found components
+        import NotFoundView from './src/scripts/pages/view/not-found-view.js';
+        import NotFoundPresenter from './src/scripts/pages/presenter/not-found-presenter.js';
+
+        class Test404App {
+            constructor() {
+                this.presenter = new NotFoundPresenter();
+                this.setupConsoleCapture();
+                this.setupHashChangeListener();
+            }
+
+            async init() {
+                try {
+                    // Check if we should show 404 page based on hash
+                    const hash = window.location.hash.substring(1) || '/';
+                    
+                    if (this.shouldShow404(hash)) {
+                        await this.show404Page();
+                    } else {
+                        this.showTestInstructions();
+                    }
+                } catch (error) {
+                    this.logToConsole(`❌ Error loading 404 page: ${error.message}`);
+                    document.getElementById('app-content').innerHTML = `
+                        <div class="status-message error">
+                            <div class="message-content">
+                                <i class="fa-solid fa-exclamation-circle"></i>
+                                <span>Error: ${error.message}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            shouldShow404(hash) {
+                // Valid routes for this test app
+                const validRoutes = ['/', ''];
+                return !validRoutes.includes(hash);
+            }
+
+            async show404Page() {
+                this.logToConsole('🔍 Showing 404 page for invalid route...');
+                
+                const content = await this.presenter.render();
+                document.getElementById('app-content').innerHTML = content;
+                await this.presenter.afterRender();
+                
+                this.logToConsole('✅ 404 page loaded successfully');
+                this.logToConsole(`Current hash: ${window.location.hash}`);
+            }
+
+            showTestInstructions() {
+                document.getElementById('app-content').innerHTML = `
+                    <div class="not-found-container">
+                        <div class="not-found-content">
+                            <div class="error-illustration">
+                                <div class="error-icon">
+                                    <i class="fa-solid fa-info-circle"></i>
+                                </div>
+                            </div>
+                            <div class="error-message">
+                                <h1>Test 404 Page Ready</h1>
+                                <p class="error-description">
+                                    Klik salah satu link test di atas untuk melihat halaman 404 beraksi.
+                                    Halaman ini akan menampilkan halaman Not Found dengan berbagai fitur:
+                                </p>
+                            </div>
+                            <div class="helpful-links">
+                                <h3>Fitur yang akan ditampilkan:</h3>
+                                <div class="links-grid">
+                                    <div class="helpful-link">
+                                        <i class="fa-solid fa-search"></i>
+                                        <span>Quick Search</span>
+                                    </div>
+                                    <div class="helpful-link">
+                                        <i class="fa-solid fa-link"></i>
+                                        <span>Helpful Links</span>
+                                    </div>
+                                    <div class="helpful-link">
+                                        <i class="fa-solid fa-arrow-left"></i>
+                                        <span>Go Back Button</span>
+                                    </div>
+                                    <div class="helpful-link">
+                                        <i class="fa-solid fa-info"></i>
+                                        <span>Technical Details</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                this.logToConsole('ℹ️ Test instructions displayed');
+            }
+
+            setupHashChangeListener() {
+                window.addEventListener('hashchange', () => {
+                    this.logToConsole(`Hash changed to: ${window.location.hash}`);
+                    this.init();
+                });
+            }
+
+            setupConsoleCapture() {
+                const consoleElement = document.getElementById('console-log');
+                const originalLog = console.log;
+                const originalError = console.error;
+                const originalWarn = console.warn;
+
+                console.log = (...args) => {
+                    originalLog.apply(console, args);
+                    this.logToConsole('LOG: ' + args.join(' '));
+                };
+
+                console.error = (...args) => {
+                    originalError.apply(console, args);
+                    this.logToConsole('ERROR: ' + args.join(' '));
+                };
+
+                console.warn = (...args) => {
+                    originalWarn.apply(console, args);
+                    this.logToConsole('WARN: ' + args.join(' '));
+                };
+
+                document.getElementById('clear-console').addEventListener('click', () => {
+                    consoleElement.textContent = '';
+                });
+            }
+
+            logToConsole(message) {
+                const consoleElement = document.getElementById('console-log');
+                const timestamp = new Date().toLocaleTimeString();
+                consoleElement.textContent += `[${timestamp}] ${message}\n`;
+                consoleElement.scrollTop = consoleElement.scrollHeight;
+            }
+        }
+
+        // Initialize the test app
+        const app = new Test404App();
+        app.init();
+
+        // Global test functions
+        window.test404 = {
+            triggerSpecific404(type) {
+                switch (type) {
+                    case 'invalid_story':
+                        window.location.hash = '#/story/nonexistent123';
+                        break;
+                    case 'unauthorized':
+                        window.location.hash = '#/admin/dashboard';
+                        break;
+                    case 'random':
+                        window.location.hash = '#/random-' + Math.random().toString(36).substr(2, 9);
+                        break;
+                    default:
+                        window.location.hash = '#/404-test';
+                }
+                app.logToConsole(`Triggered 404 type: ${type}`);
+            },
+
+            goToValidRoute() {
+                window.location.hash = '#/';
+                app.logToConsole('Navigated to valid route');
+            },
+
+            testSearch(query) {
+                app.logToConsole(`Testing search with query: "${query}"`);
+                // This would be used when the 404 page is loaded
+                const searchInput = document.getElementById('page-search');
+                if (searchInput) {
+                    searchInput.value = query;
+                    searchInput.dispatchEvent(new Event('input'));
+                } else {
+                    app.logToConsole('Search input not available (404 page not loaded)');
+                }
+            }
+        };
+
+        // Log available test functions
+        app.logToConsole('🚀 Test 404 App Initialized');
+        app.logToConsole('Available functions:');
+        app.logToConsole('- test404.triggerSpecific404("invalid_story")');
+        app.logToConsole('- test404.triggerSpecific404("unauthorized")');
+        app.logToConsole('- test404.triggerSpecific404("random")');
+        app.logToConsole('- test404.goToValidRoute()');
+        app.logToConsole('- test404.testSearch("query")');
+    </script>
+</body>
+</html>

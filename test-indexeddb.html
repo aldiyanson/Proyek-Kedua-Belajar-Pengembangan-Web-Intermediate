@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test IndexedDB UI - DiCerita</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="src/styles/styles.css">
+    <style>
+        body {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: var(--color-surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+        }
+        .test-header h1 {
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+        .test-header p {
+            color: var(--color-light-text);
+        }
+    </style>
+</head>
+<body>
+    <div class="test-header">
+        <h1><i class="fa-solid fa-database"></i> Test IndexedDB UI</h1>
+        <p>Halaman testing untuk fitur manajemen data offline IndexedDB</p>
+    </div>
+
+    <div id="app-content"></div>
+
+    <script type="module">
+        // Import the offline data components
+        import OfflineDataView from './src/scripts/pages/view/offline-data-view.js';
+        import OfflineDataModel from './src/scripts/pages/model/offline-data-model.js';
+        import OfflineDataPresenter from './src/scripts/pages/presenter/offline-data-presenter.js';
+
+        class TestApp {
+            constructor() {
+                this.presenter = new OfflineDataPresenter();
+            }
+
+            async init() {
+                try {
+                    const content = await this.presenter.render();
+                    document.getElementById('app-content').innerHTML = content;
+                    await this.presenter.afterRender();
+                    console.log('✅ IndexedDB UI berhasil dimuat');
+                } catch (error) {
+                    console.error('❌ Error loading IndexedDB UI:', error);
+                    document.getElementById('app-content').innerHTML = `
+                        <div class="status-message error">
+                            <div class="message-content">
+                                <i class="fa-solid fa-exclamation-circle"></i>
+                                <span>Error: ${error.message}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Initialize the test app
+        const app = new TestApp();
+        app.init();
+    </script>
+</body>
+</html>

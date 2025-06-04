@@ -1,0 +1,561 @@
+/* Header styles */
+header {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding-block: 12px;
+  width: 100%;
+}
+
+.main-header {
+  min-height: 70px;
+  padding-block: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: nowrap;
+}
+
+.brand-name {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+}
+
+.brand-name:hover {
+  transform: translateY(-1px);
+  text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+.brand-name i {
+  color: white;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.3));
+  font-size: 1.9rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.brand-name:hover i {
+  transform: scale(1.1);
+}
+
+.navigation-drawer {
+  min-height: 100vh;
+  width: 200px;
+  padding: 20px 10px;
+  /* background-color: var(--color-surface); */
+  background: linear-gradient(to bottom, var(--color-surface), #e0e0e0); /* Added gradient */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+
+  box-shadow: 0 0 4px 2px #00000033;
+  transform: translateX(-100%);
+  transition: transform 350ms;
+
+  z-index: 1100;
+}
+
+.navigation-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-button {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-primary);
+  font-weight: bold;
+  font-size: 24px;
+  color: #fff;
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drawer-button:hover,
+.drawer-button:focus {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.drawer-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#main-nav, .auth-links {
+  width: 100%;
+}
+
+/* Main navigation visibility controlled by auth state */
+#main-nav {
+  display: none; /* Hidden by default on mobile */
+}
+
+/* Show nav for logged in users */
+header.logged-in #main-nav {
+  display: block; /* Show when logged in */
+}
+
+/* Auth nav items visibility */
+.auth-nav-item {
+  display: block !important; /* Always show auth nav items */
+}
+
+/* Auth buttons container for non-logged in users (Desktop) */
+.auth-buttons-container {
+  display: none; /* Hidden by default */
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* Individual login/register buttons (Desktop) */
+.auth-buttons-container .login-btn,
+.auth-buttons-container .register-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.auth-buttons-container .login-btn {
+  background-color: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.auth-buttons-container .register-btn {
+  background-color: white;
+  color: var(--color-primary);
+}
+
+.auth-buttons-container .login-btn:hover,
+.auth-buttons-container .register-btn:hover {
+  transform: translateY(-2px);
+}
+
+.auth-buttons-container .login-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.auth-buttons-container .register-btn:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+#user-name {
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+#user-logged-out a {
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+#user-logged-out a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-list li a {
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.nav-list li a:hover,
+.nav-list li a:focus {
+  color: var(--color-primary);
+  background-color: rgba(0, 0, 0, 0.05); /* Add a subtle background on hover/focus */
+  transform: translateY(-2px);
+  transition: transform 0.2s ease, color 0.2s ease, background-color 0.2s ease;
+}
+
+/* User dropdown styles */
+.user-dropdown-container {
+  position: relative;
+  order: 2;
+  display: none; /* Hidden by default, shown when logged in via JavaScript */
+}
+
+.user-dropdown-button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.user-dropdown-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.user-dropdown-content {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 220px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1200;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+/* Show dropdown when clicking button (handled by JavaScript) */
+.user-dropdown-content.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Additional hover effect for larger screens */
+@media (hover: hover) {
+  .user-dropdown-container:hover .user-dropdown-content,
+  .user-dropdown-button:focus + .user-dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.user-dropdown-header {
+  padding: 16px;
+  border-bottom: 1px solid #f0f2f5;
+  text-align: center;
+}
+
+#dropdown-user-name {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 1.1rem;
+}
+
+.user-dropdown-menu {
+  padding: 8px 0;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: var(--color-text);
+  text-decoration: none;
+  gap: 10px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f2f5;
+  color: var(--color-primary);
+}
+
+.dropdown-item i {
+  width: 18px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* Responsive styles */
+@media screen and (width > 1000px) {
+  .navigation-drawer {
+    min-height: auto;
+    width: auto;
+    padding: 0;
+    background-color: var(--color-primary); /* Match header background */
+    flex-direction: row;
+    justify-content: space-between;
+    position: static;
+    box-shadow: none;
+    transform: translateX(0);
+  }
+
+  .nav-list {
+    flex-direction: row;
+  }
+
+  /* Desktop styling for logged in state only */
+  header.logged-in #main-nav {
+    display: flex !important;
+    flex-direction: row; /* Ensure row layout on desktop */
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 0; /* Remove bottom margin on desktop */
+  }
+  
+  /* Special handling for auth pages (login/register) */
+  body.auth-page #main-nav {
+    display: none !important;
+  }
+  
+  /* Fix for navigation drawer on auth pages */
+  body.auth-page .navigation-drawer .nav-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Special styling for auth links in navigation drawer on auth pages */
+  body.auth-page .auth-nav-item {
+    margin: 5px 0;
+  }
+  
+  body.auth-page .auth-nav-item a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--color-text);
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  
+  body.auth-page .auth-nav-item a:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--color-primary);
+  }
+  
+  /* Additional styling for logged-out state */
+  header.logged-out #main-nav {
+    background-color: var(--color-primary);
+  }
+  
+  /* Header background consistent styling */
+  header.desktop-view .navigation-drawer {
+    background-color: var(--color-primary);
+  }
+
+  .nav-list li a {
+    display: inline-flex;
+    align-items: center;
+    color: white; /* Set text to white for contrast on primary color */
+    padding: 8px 16px;
+    border-radius: 8px;
+  }
+
+  .nav-list li a:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Light hover effect */
+    color: white; /* Keep text white on hover */
+  }
+
+  .drawer-button {
+    display: none;
+  }
+
+  .user-dropdown-container {
+    margin-left: auto;
+    margin-right: 20px;
+    order: unset;
+  }
+
+  .user-dropdown-content {
+    right: 0;
+  }
+
+  /* Show auth buttons container on desktop when logged out */
+  /* Always show auth buttons on desktop regardless of login state */
+  @media screen and (width > 1000px) {
+    .auth-buttons-container {
+      display: flex !important;
+      margin-left: auto;
+    }
+
+    /* Show brand name and basic header structure */
+    .main-header {
+      padding: 0 2rem;
+    }
+
+    /* Desktop navigation container */
+    #main-nav {
+      display: flex !important; /* Always display in desktop view */
+      flex-grow: 1;
+      justify-content: center;
+      margin-left: auto;
+      background-color: var(--color-primary);
+    }
+    
+    /* Make sure nav items in desktop use white text */
+    .nav-list li a {
+      color: white;
+    }
+    
+    /* Fix hover state to maintain white text */
+    .nav-list li a:hover,
+    .nav-list li a:focus {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+@media screen and (max-width: 900px) {
+  .main-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 70px;
+    padding-block: 12px;
+    flex-wrap: nowrap;
+  }
+
+}
+
+@media screen and (max-width: 600px) {
+  .main-header {
+    gap: 10px;
+    padding-block: 8px;
+    height: auto;
+  }
+  
+  .brand-name {
+    font-size: 1.1rem;
+    gap: 6px;
+  }
+  
+  .brand-name i {
+    font-size: 1.2rem;
+  }
+  
+  .drawer-button {
+    font-size: 36px;
+    padding: 14px;
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 8px;
+  }
+  
+  .nav-list li a {
+    font-size: 1.1rem;
+    padding: 14px 16px;
+    min-width: 48px;
+    min-height: 48px;
+    border-radius: 8px;
+  }
+
+  /* Ensure auth nav items look like other nav items in mobile */
+  .auth-nav-item a {
+    color: var(--color-text); /* Match other nav links */
+    background-color: transparent; /* Remove button background */
+    border: none; /* Remove button border */
+    padding: 14px 16px; /* Match other nav links padding */
+    border-radius: 8px; /* Match other nav links border-radius */
+    font-weight: 600; /* Match other nav links font-weight */
+  }
+
+  .auth-nav-item a:hover,
+  .auth-nav-item a:focus {
+     background-color: rgba(0, 0, 0, 0.05); /* Add hover background */
+     color: var(--color-primary); /* Match other nav links hover color */
+  }
+  
+  .navigation-drawer {
+    width: 80vw;
+    min-width: 180px;
+    max-width: 320px;
+    padding: 16px 4px;
+  }
+  
+  .user-dropdown-button {
+    font-size: 1.5rem;
+    padding: 4px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  
+  .user-dropdown-content {
+    min-width: 200px;
+    right: -10px;
+  }
+  
+  .dropdown-item {
+    padding: 10px 14px;
+  }
+  
+}
+
+/* Improve tap target spacing for all touch devices */
+@media (pointer: coarse) {
+  .drawer-button,
+  .nav-list li a {
+    min-width: 48px;
+    min-height: 48px;
+    padding: 12px 16px;
+  }
+}
+/* Hide main navigation for logged-out users in desktop mode */
+header.logged-out.desktop-view #main-nav {
+  display: none !important;
+}
+/* Hide main navigation for logged-out users in desktop mode (always keep in DOM) */
+header.logged-out.desktop-view #main-nav {
+  display: none !important;
+}
+/* Hide navigation drawer for logged-out users in desktop mode on login/register page */
+body.auth-page header.logged-out.desktop-view nav#navigation-drawer {
+  display: none !important;
+}
+/* Force hide navigation drawer in desktop mode before login on auth pages */
+body.auth-page .navigation-drawer {
+  display: none !important;
+}
+/* Hide navigation drawer for logged-out users in desktop mode on about/map pages */
+body.about-page header.logged-out.desktop-view .navigation-drawer,
+body.map-page header.logged-out.desktop-view .navigation-drawer {
+  display: none !important;
+}
